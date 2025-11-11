@@ -12,8 +12,19 @@ export default function FooocusFrame() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Load saved URL from localStorage on mount
+  // Load URL from env variable or localStorage on mount
   useEffect(() => {
+    const envUrl = process.env.NEXT_PUBLIC_FOOOCUS_URL;
+
+    // Priority 1: Check if environment variable is set (for HF Spaces, etc.)
+    if (envUrl && envUrl !== 'https://your-fooocus-server.com') {
+      setInputUrl(envUrl);
+      setFooocusUrl(envUrl);
+      setIsConnected(true);
+      return;
+    }
+
+    // Priority 2: Load from localStorage (manually entered URL)
     const savedUrl = localStorage.getItem('fooocus_url');
     if (savedUrl) {
       setInputUrl(savedUrl);
