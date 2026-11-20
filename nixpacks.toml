@@ -1,0 +1,15 @@
+# Railway Nixpacks configuration (alternative to Dockerfile)
+[phases.setup]
+nixPkgs = ["python310", "git", "wget"]
+
+[phases.install]
+cmds = [
+  "git clone https://github.com/lllyasviel/Fooocus.git .",
+  "pip install --no-cache-dir -r requirements_versions.txt"
+]
+
+[phases.build]
+cmds = ["mkdir -p outputs models"]
+
+[start]
+cmd = "python entry_with_update.py --listen 0.0.0.0 --port $PORT --always-cpu"

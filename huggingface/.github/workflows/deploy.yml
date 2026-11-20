@@ -1,0 +1,27 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'huggingface/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy to Hugging Face
+        uses: nateraw/huggingface-sync-action@v0.0.4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          hf_token: ${{ secrets.HF_TOKEN }}
+          hf_username: ${{ secrets.HF_USERNAME }}
+          space_name: fooocus-cpu
+          space_emoji: 🎨
+          space_sdk: docker
+          space_app_port: 7860
+          repo_path: huggingface/

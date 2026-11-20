@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Fooocus AI Image Generation Service
+  fooocus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fooocus-cpu
+    ports:
+      - "7865:7865"
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - GRADIO_SERVER_PORT=7865
+      # CPU optimization settings
+      - OMP_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+    volumes:
+      # Persist generated images
+      - ./outputs:/app/outputs
+      # Persist downloaded models (saves re-downloading)
+      - ./models:/app/models
+      # Optional: Custom configs
+      - ./config.txt:/app/config.txt:ro
+    restart: unless-stopped
+    networks:
+      - fooocus-network
+
+  # Cloudflare Tunnel for public access (Option 1)
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: fooocus-tunnel
+    command: tunnel --no-autoupdate --url http://fooocus:7865
+    depends_on:
+      - fooocus
+    restart: unless-stopped
+    networks:
+      - fooocus-network
+
+  # Alternative: Ngrok Tunnel (Option 2)
+  # Uncomment to use ngrok instead of cloudflare
+  # ngrok:
+  #   image: ngrok/ngrok:latest
+  #   container_name: fooocus-ngrok
+  #   command: http fooocus:7865
+  #   environment:
+  #     - NGROK_AUTHTOKEN=YOUR_NGROK_TOKEN_HERE
+  #   depends_on:
+  #     - fooocus
+  #   ports:
+  #     - "4040:4040"  # Ngrok web interface
+  #   restart: unless-stopped
+  #   networks:
+  #     - fooocus-network
+
+networks:
+  fooocus-network:
+    driver: bridge
+
+volumes:
+  fooocus-outputs:
+  fooocus-models:

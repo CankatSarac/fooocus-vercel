@@ -32,3 +32,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Docker volumes
+outputs/
+!outputs/.gitkeep
+models/
+!models/.gitkeep
+
+# Hugging Face Space clones
+hf-space-*/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

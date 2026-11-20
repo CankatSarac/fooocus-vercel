@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: fooocus-cpu
+    env: docker
+    dockerfilePath: ./railway/Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /
+    envVars:
+      - key: GRADIO_SERVER_NAME
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: PYTHON_VERSION
+        value: 3.10
+    disk:
+      name: fooocus-data
+      mountPath: /app/outputs
+      sizeGB: 1
+    autoDeploy: true
